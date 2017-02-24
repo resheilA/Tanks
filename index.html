@@ -103,19 +103,19 @@ function bullets(width, height, color, x, y, type) {
         ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
         ctx.restore();    
     }
+
     this.newPos = function() {
-        this.angle += myGamePiece.moveAngle * Math.PI / 180;
-        this.x += this.speed * Math.sin(myGamePiece.angle);
-        this.y -= this.speed * Math.cos(myGamePiece.angle);
-	//	console.log(this.x);
+        this.angle += this.moveAngle * Math.PI / 180;
+        this.x += this.speed * Math.sin(this.angle);
+        this.y -= this.speed * Math.cos(this.angle);	
     }
-	this.destroy = function() {
-	}
+	
 }
 
 
 function bulletsfire(i) {
-    bullet[i].speed += 0.1; 
+    bullet[i].speed += 0.5; 
+	bullet[i].angle = myGamePiece.angle; 	
 }
 
 function updateGameArea() {
@@ -130,20 +130,24 @@ function updateGameArea() {
 	
 	myGamePiece.newPos();
     myGamePiece.update();
-	
-	if (myGameArea.keys && myGameArea.keys[32]) {}
-	
+
 	 myGameArea.frameNo += 1;
-    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+    if (myGameArea.frameNo == 1 || everyinterval(40)) {
         x = myGameArea.canvas.width;
         y = myGameArea.canvas.height - 200;
         bullet.push(new bullets(5, 5, "green", myGamePiece.x, myGamePiece.y));
     }
+	
+	 if (myGameArea.frameNo == 1 || everyinterval(800)) {
+        bullet = [];
+    }
+	
     for (i = 0; i < bullet.length; i += 1) {
         //bullet[i].x += 1;
 		bulletsfire(i);
         bullet[i].update();
 		bullet[i].newPos();
+	//	bullet[i].destory();		
 	}
 	
 	
