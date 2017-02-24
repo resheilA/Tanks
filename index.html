@@ -13,6 +13,7 @@ canvas {
 
 <script>
 var myGamePiece;
+var bullet = [];
 
 function startGame() {
     myGamePiece = new component(30, 30, "tank.png", 10, 120, "image");
@@ -24,7 +25,7 @@ var myGameArea = {
     start : function() {
         this.canvas.width = 880;
         this.canvas.height = 470;
-        this.context = this.canvas.getContext("2d");
+        this.context = this.canvas.getContext("2d");  
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
         this.interval = setInterval(updateGameArea, 20);
@@ -43,6 +44,11 @@ var myGameArea = {
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
+}
+
+function everyinterval(n) {
+    if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
+    return false;
 }
 
 function component(width, height, color, x, y, type) {
@@ -67,26 +73,83 @@ function component(width, height, color, x, y, type) {
      //   ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
         ctx.restore();    
 		
-		log.console(this.width);
     }
     this.newPos = function() {
         this.angle += this.moveAngle * Math.PI / 180;
         this.x += this.speed * Math.sin(this.angle);
         this.y -= this.speed * Math.cos(this.angle);
+		//console.log(this.x);
     }
+}
+
+
+function bullets(width, height, color, x, y, type) {
+    this.type = type;
+   // this.image.src = color;
+    this.width = width;
+    this.height = height;
+    this.speed = 0;
+    this.angle = 0;
+    this.moveAngle = 0;
+    this.x = myGamePiece.x;
+    this.y = myGamePiece.y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.angle);
+        ctx.fillStyle = color;
+	//	 ctx.drawImage(this.image, this.height /-2,  this.width /-2);
+        ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+        ctx.restore();    
+    }
+    this.newPos = function() {
+        this.angle += myGamePiece.moveAngle * Math.PI / 180;
+        this.x += this.speed * Math.sin(myGamePiece.angle);
+        this.y -= this.speed * Math.cos(myGamePiece.angle);
+	//	console.log(this.x);
+    }
+	this.destroy = function() {
+	}
+}
+
+
+function bulletsfire(i) {
+    bullet[i].speed += 0.1; 
 }
 
 function updateGameArea() {
     myGameArea.clear();
     myGamePiece.moveAngle = 0;
     myGamePiece.speed = 0;
-    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -1; }
-    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 1; }
-    if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 1; }
-    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -1; }
-    myGamePiece.newPos();
+	
+    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -2; }
+    if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 2; }
+    if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 2; }
+    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -2; }
+	
+	myGamePiece.newPos();
     myGamePiece.update();
+	
+	if (myGameArea.keys && myGameArea.keys[32]) {}
+	
+	 myGameArea.frameNo += 1;
+    if (myGameArea.frameNo == 1 || everyinterval(150)) {
+        x = myGameArea.canvas.width;
+        y = myGameArea.canvas.height - 200;
+        bullet.push(new bullets(5, 5, "green", myGamePiece.x, myGamePiece.y));
+    }
+    for (i = 0; i < bullet.length; i += 1) {
+        //bullet[i].x += 1;
+		bulletsfire(i);
+        bullet[i].update();
+		bullet[i].newPos();
+	}
+	
+	
 }
+
+
 </script>
 
 <p>Make sure the gamearea has focus, and use the arrow keys to move the red square around.</p>
