@@ -13,6 +13,7 @@ canvas {
 
 <script>
 var myGamePiece;
+var myGamePiece;
 var bullet = [];
 var blding1;
 var blding2;
@@ -98,6 +99,21 @@ function blding(width, height, color, x, y) {
           ctx.fillStyle = color;
           ctx.fillRect(this.x, this.y, this.width, this.height);
 	}
+	this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
+    }
 }
 
 function bullets(width, height, color, x, y, type) {
@@ -119,6 +135,7 @@ function bullets(width, height, color, x, y, type) {
         ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
         ctx.restore();    
     }
+
 
     this.newPos = function() {
         this.angle += this.moveAngle * Math.PI / 180;
@@ -162,9 +179,18 @@ function updateGameArea() {
 		bulletsfire(i);
         bullet[i].update();
 		bullet[i].newPos();
+	 if (blding2.crashWith(bullet[i])) {
+        console.log("Scores");
+     }
 	}
+	
+	if (blding2.crashWith(myGamePiece)) {
+        console.log("Looses");
+    }
+	
 	blding1.update();
 	blding2.update();
+	
 }
 
 
