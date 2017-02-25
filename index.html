@@ -14,10 +14,15 @@ canvas {
 <script>
 var myGamePiece;
 var bullet = [];
+var blding1;
+var blding2;
 
 function startGame() {
-    myGamePiece = new component(30, 30, "tank.png", 10, 120, "image");
+
     myGameArea.start();
+	    myGamePiece = new component(30, 30, "tank.png", 30, 100, "image");
+		blding1 = new blding(10, 60, "red", 0, 215);  
+	    blding2 = new blding(10, 60, "red", 870, 215);  
 }
 
 var myGameArea = {
@@ -82,10 +87,21 @@ function component(width, height, color, x, y, type) {
     }
 }
 
+function blding(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y; 
+	this.color = color;
+	this.update = function() {
+	       ctx = myGameArea.context;
+          ctx.fillStyle = color;
+          ctx.fillRect(this.x, this.y, this.width, this.height);
+	}
+}
 
 function bullets(width, height, color, x, y, type) {
     this.type = type;
-   // this.image.src = color;
     this.width = width;
     this.height = height;
     this.speed = 0;
@@ -141,16 +157,14 @@ function updateGameArea() {
 	 if (myGameArea.frameNo == 1 || everyinterval(800)) {
         bullet = [];
     }
-	
+		
     for (i = 0; i < bullet.length; i += 1) {
-        //bullet[i].x += 1;
 		bulletsfire(i);
         bullet[i].update();
 		bullet[i].newPos();
-	//	bullet[i].destory();		
 	}
-	
-	
+	blding1.update();
+	blding2.update();
 }
 
 
