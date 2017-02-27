@@ -14,7 +14,7 @@ while($c = socket_accept($sock)) {
    echo $input; 
    
    //$message = fgets(STDIN);
-   socket_write($c, fgets(STDIN), strlen ($message)) or die("Error");
+   socket_write($c, fgets(STDIN), 1024) or die("Error");
    
    socket_getpeername($c, $raddr, $rport); 
    print "Received Connection from $raddr:$rport\n"; 
