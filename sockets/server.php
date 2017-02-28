@@ -10,11 +10,15 @@ $message = "Hello, This is server !!";
 while($c = socket_accept($sock)) { 
    /* do something useful */ 
    // read client input
+   
    $input = socket_read($c, 1024) or die("Error");
    echo $input; 
    
-   //$message = fgets(STDIN);
-   socket_write($c, fgets(STDIN), 1024) or die("Error");
+    //$message = fgets(STDIN);
+    socket_write($c, fgets(STDIN), 1024) or die("Error");
+   
+//    socket_sendto($c, fgets(STDIN), 1024, 0, '127.0.0.1', 1223) or die("Error");
+	
    
    socket_getpeername($c, $raddr, $rport); 
    print "Received Connection from $raddr:$rport\n"; 
