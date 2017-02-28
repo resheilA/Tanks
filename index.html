@@ -90,6 +90,14 @@ function component(width, height, color, x, y, type) {
         this.x += this.speed * Math.sin(this.angle);
         this.y -= this.speed * Math.cos(this.angle);
 		//console.log(this.x);
+		if(this.x > 840 || this.y > 450)
+		{
+		this.angle--;
+		}
+		if(this.x < 0 || this.y < 0)
+		{
+		this.angle--;
+		}
     }
 	this.crashWith = function(otherobj) {
         var myleft = this.x;
@@ -250,6 +258,18 @@ function updateGameArea() {
 	if (blding1.crashWith(comp1)) {
         console.log("Score B = " + scoreB--);
     }
+	if (myGamePiece.crashWith(comp1)) {
+        //console.log("Life A = " + myGamePiece.life--);
+		 myGamePiece.angle ++ ;
+		 comp1.angle ++;
+    }
+	
+	if (comp1.crashWith(myGamePiece)) {
+        //console.log("Life A = " + myGamePiece.life--);
+		 myGamePiece.angle ++ ;
+		 comp1.angle ++;
+    }
+	
 	blding1.update();
 	blding2.update();
 	
