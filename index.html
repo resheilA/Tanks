@@ -13,15 +13,19 @@ canvas {
 
 <script>
 var myGamePiece;
-var myGamePiece;
+var comp1;
 var bullet = [];
+var bulletcomp1 = [];
 var blding1;
 var blding2;
+var scoreA = 0;
+var scoreB = 0;
 
 function startGame() {
 
-    myGameArea.start();
+        myGameArea.start();
 	    myGamePiece = new component(30, 30, "tank.png", 30, 100, "image");
+		comp1 = new component(30, 30, "tank.png", 800, 100, "image");
 		blding1 = new blding(10, 60, "red", 0, 215);  
 	    blding2 = new blding(10, 60, "red", 870, 215);  
 }
@@ -68,7 +72,8 @@ function component(width, height, color, x, y, type) {
     this.angle = 0;
     this.moveAngle = 0;
     this.x = x;
-    this.y = y;    
+    this.y = y;   
+    this.life = 10;	
     this.update = function() {
         ctx = myGameArea.context;
         ctx.save();
@@ -85,6 +90,21 @@ function component(width, height, color, x, y, type) {
         this.x += this.speed * Math.sin(this.angle);
         this.y -= this.speed * Math.cos(this.angle);
 		//console.log(this.x);
+    }
+	this.crashWith = function(otherobj) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = otherobj.x;
+        var otherright = otherobj.x + (otherobj.width);
+        var othertop = otherobj.y;
+        var otherbottom = otherobj.y + (otherobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            crash = false;
+        }
+        return crash;
     }
 }
 
@@ -116,15 +136,15 @@ function blding(width, height, color, x, y) {
     }
 }
 
-function bullets(width, height, color, x, y, type) {
+function bullets(width, height, color, x, y, type, object) {
     this.type = type;
     this.width = width;
     this.height = height;
     this.speed = 0;
     this.angle = 0;
     this.moveAngle = 0;
-    this.x = myGamePiece.x;
-    this.y = myGamePiece.y;    
+    this.x = x;
+    this.y = y;    
     this.update = function() {
         ctx = myGameArea.context;
         ctx.save();
@@ -135,8 +155,6 @@ function bullets(width, height, color, x, y, type) {
         ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
         ctx.restore();    
     }
-
-
     this.newPos = function() {
         this.angle += this.moveAngle * Math.PI / 180;
         this.x += this.speed * Math.sin(this.angle);
@@ -146,48 +164,92 @@ function bullets(width, height, color, x, y, type) {
 }
 
 
-function bulletsfire(i) {
+function bulletsfire(i, who) {
+    if(who == 1){
     bullet[i].speed += 0.5; 
 	bullet[i].angle = myGamePiece.angle; 	
+    }
+	if(who == 2){
+    bulletcomp1[i].speed += 0.5; 
+	bulletcomp1[i].angle = comp1.angle; 		
+	}
 }
 
 function updateGameArea() {
     myGameArea.clear();
-    myGamePiece.moveAngle = 0;
+    
+	myGamePiece.moveAngle = 0;
     myGamePiece.speed = 0;
-	
-    if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -2; }
+	comp1.moveAngle = 0;
+    comp1.speed = 0;
+    
+	if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -2; }
     if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 2; }
     if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 2; }
     if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -2; }
 	
+	if (myGameArea.keys && myGameArea.keys[65]) {comp1.moveAngle = -2; }
+    if (myGameArea.keys && myGameArea.keys[68]) {comp1.moveAngle = 2; }
+    if (myGameArea.keys && myGameArea.keys[87]) {comp1.speed= 2; }
+    if (myGameArea.keys && myGameArea.keys[83]) {comp1.speed= -2; }
+	
 	myGamePiece.newPos();
     myGamePiece.update();
+
+ 
+	comp1.newPos();
+    comp1.update();
 
 	 myGameArea.frameNo += 1;
     if (myGameArea.frameNo == 1 || everyinterval(40)) {
         x = myGameArea.canvas.width;
         y = myGameArea.canvas.height - 200;
         bullet.push(new bullets(5, 5, "green", myGamePiece.x, myGamePiece.y));
+        bulletcomp1.push(new bullets(5, 5, "green", comp1.x, comp1.y));
     }
 	
 	 if (myGameArea.frameNo == 1 || everyinterval(800)) {
         bullet = [];
+		bulletcomp1 = [];
     }
 		
     for (i = 0; i < bullet.length; i += 1) {
-		bulletsfire(i);
+		bulletsfire(i , 1);
         bullet[i].update();
 		bullet[i].newPos();
 	 if (blding2.crashWith(bullet[i])) {
-        console.log("Scores");
+        console.log("Score A = " + scoreA++);
      }
+	 if (comp1.crashWith(bullet[i])) {
+        console.log("Life B = " + comp1.life--);
+		}	
 	}
 	
+	for (i = 0; i < bulletcomp1.length; i += 1) {
+		bulletsfire(i, 2);
+        bulletcomp1[i].update();
+		bulletcomp1[i].newPos();
+	 if (blding1.crashWith(bulletcomp1[i])) {
+        console.log("Score B = " + scoreB++);
+     }	 
+	if (myGamePiece.crashWith(bulletcomp1[i])) {
+        console.log("Life A = " + myGamePiece.life--);
+    }	
+	}
+		
 	if (blding2.crashWith(myGamePiece)) {
-        console.log("Looses");
+        console.log("Score A = " + scoreA--);
+    }
+	if (blding2.crashWith(comp1)) {
+        console.log("Score B = " + scoreB--);
     }
 	
+	if (blding1.crashWith(myGamePiece)) {
+        console.log("Score A = " + scoreA--);
+    }
+	if (blding1.crashWith(comp1)) {
+        console.log("Score B = " + scoreB--);
+    }
 	blding1.update();
 	blding2.update();
 	
@@ -195,8 +257,5 @@ function updateGameArea() {
 
 
 </script>
-
-<p>Make sure the gamearea has focus, and use the arrow keys to move the red square around.</p>
-
 </body>
 </html>
