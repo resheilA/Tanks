@@ -20,16 +20,19 @@ var blding1;
 var blding2;
 var scoreA;
 var scoreB = 0;
+var bgimg;
 
 function startGame() {
 
         myGameArea.start();
+		//welcomescreen = new welcomescreen();
 	    myGamePiece = new component(30, 30, "tank.png", 30, 100, "image");
 		comp1 = new component(30, 30, "tank1.png", 800, 100, "image");
 		blding1 = new blding(10, 60, "green", 0, 215);  
 	    blding2 = new blding(10, 60, "red", 870, 215);  
 		scoreA = new score("20px", "Consolas", "green", 20, 40, "text");
 		scoreB = new score("20px", "Consolas", "red", 670, 40, "text");
+		bgimg = new background(880, 470, "backgroundimage.jpg", 0, 0, "image");
 }
 
 
@@ -63,6 +66,7 @@ function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
     return false;
 }
+
 
 function score(width, height, color, x, y, type){
     this.type = type;
@@ -207,9 +211,27 @@ function bulletsfire(i, who) {
 	}
 }
 
+function background(width, height, color, x, y, type) {
+    this.type = type;
+    if (type == "image") {
+        this.image = new Image();
+        this.image.src = color;
+    }
+  this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+	         	ctx = myGameArea.context;
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+}
+}
+
 function updateGameArea() {
     myGameArea.clear();
-    
+    	bgimg.update();
 	myGamePiece.moveAngle = 0;
     myGamePiece.speed = 0;
 	comp1.moveAngle = 0;
@@ -314,7 +336,7 @@ function updateGameArea() {
 	scoreB.update();
 	blding1.update();
 	blding2.update();
-	
+
 }
 
 
