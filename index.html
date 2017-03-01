@@ -230,6 +230,8 @@ function updateGameArea() {
      }
 	 if (comp1.crashWith(bullet[i])) {
         console.log("Life B = " + comp1.life--);
+		bullet.speed = 0;
+		bullet = [];
 		}	
 	}
 	
@@ -238,10 +240,12 @@ function updateGameArea() {
         bulletcomp1[i].update();
 		bulletcomp1[i].newPos();
 	 if (blding1.crashWith(bulletcomp1[i])) {
-        console.log("Score B = " + scoreB++);
+        console.log("Score B = " + scoreB++);		
      }	 
 	if (myGamePiece.crashWith(bulletcomp1[i])) {
         console.log("Life A = " + myGamePiece.life--);
+		bulletcomp1.speed = 0;
+		bulletcomp1 = [];
     }	
 	}
 		
