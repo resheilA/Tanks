@@ -18,17 +18,20 @@ var bullet = [];
 var bulletcomp1 = [];
 var blding1;
 var blding2;
-var scoreA = 0;
+var scoreA;
 var scoreB = 0;
 
 function startGame() {
 
         myGameArea.start();
 	    myGamePiece = new component(30, 30, "tank.png", 30, 100, "image");
-		comp1 = new component(30, 30, "tank.png", 800, 100, "image");
-		blding1 = new blding(10, 60, "red", 0, 215);  
+		comp1 = new component(30, 30, "tank1.png", 800, 100, "image");
+		blding1 = new blding(10, 60, "green", 0, 215);  
 	    blding2 = new blding(10, 60, "red", 870, 215);  
+		scoreA = new score("20px", "Consolas", "green", 20, 40, "text");
+		scoreB = new score("20px", "Consolas", "red", 670, 40, "text");
 }
+
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
@@ -61,6 +64,25 @@ function everyinterval(n) {
     return false;
 }
 
+function score(width, height, color, x, y, type){
+    this.type = type;
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;    
+    this.x = x;
+    this.y = y;   
+	this.val = 0;
+	this.life = 10;
+    this.update = function() {
+			ctx = myGameArea.context;
+            ctx.font = this.width + " " + this.height;
+            ctx.fillStyle = color;
+            ctx.fillText(this.text, this.x, this.y);
+        }
+		
+}
+	
 function component(width, height, color, x, y, type) {
  
     this.type = type;
@@ -93,10 +115,12 @@ function component(width, height, color, x, y, type) {
 		if(this.x > 840 || this.y > 450)
 		{
 		this.angle--;
+		this.speed++;
 		}
 		if(this.x < 0 || this.y < 0)
 		{
 		this.angle--;
+		this.speed++;
 		}
     }
 	this.crashWith = function(otherobj) {
@@ -226,12 +250,14 @@ function updateGameArea() {
         bullet[i].update();
 		bullet[i].newPos();
 	 if (blding2.crashWith(bullet[i])) {
-        console.log("Score A = " + scoreA++);
+        // console.log("Score A = " + scoreA.val);
+		scoreA.val++;
      }
 	 if (comp1.crashWith(bullet[i])) {
-        console.log("Life B = " + comp1.life--);
+     	// console.log("Life B = " + comp1.life--);
 		bullet.speed = 0;
 		bullet = [];
+		scoreB.life--;
 		}	
 	}
 	
@@ -240,40 +266,52 @@ function updateGameArea() {
         bulletcomp1[i].update();
 		bulletcomp1[i].newPos();
 	 if (blding1.crashWith(bulletcomp1[i])) {
-        console.log("Score B = " + scoreB++);		
+      //  console.log("Score B = " + scoreB++);		
+	  scoreB.val++;
      }	 
 	if (myGamePiece.crashWith(bulletcomp1[i])) {
-        console.log("Life A = " + myGamePiece.life--);
+       // console.log("Life A = " + myGamePiece.life--);
 		bulletcomp1.speed = 0;
 		bulletcomp1 = [];
+		scoreA.life --;
     }	
 	}
 		
 	if (blding2.crashWith(myGamePiece)) {
-        console.log("Score A = " + scoreA--);
+       // console.log("Score A = " + scoreA--);
+		scoreA.val--;
     }
 	if (blding2.crashWith(comp1)) {
-        console.log("Score B = " + scoreB--);
+        ///console.log("Score B = " + scoreB--);
+		scoreB.val--;
     }
 	
 	if (blding1.crashWith(myGamePiece)) {
-        console.log("Score A = " + scoreA--);
+        //console.log("Score A = " + scoreA--);
+		scoreA.val--;
     }
 	if (blding1.crashWith(comp1)) {
-        console.log("Score B = " + scoreB--);
+       // console.log("Score B = " + scoreB--);
+	   scoreB.val--;;
     }
 	if (myGamePiece.crashWith(comp1)) {
         //console.log("Life A = " + myGamePiece.life--);
 		 myGamePiece.angle ++ ;
 		 comp1.angle ++;
+		 scoreA.life--;
     }
 	
 	if (comp1.crashWith(myGamePiece)) {
         //console.log("Life A = " + myGamePiece.life--);
 		 myGamePiece.angle ++ ;
 		 comp1.angle ++;
+		 scoreB.life--;
     }
 	
+	scoreA.text = "Life:" + scoreA.life + " Score:" + scoreA.val;
+	scoreA.update();
+	scoreB.text = "Life:" + scoreB.life + " Score:" + scoreB.val;
+	scoreB.update();
 	blding1.update();
 	blding2.update();
 	
