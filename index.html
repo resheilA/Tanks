@@ -21,11 +21,11 @@ var blding2;
 var scoreA;
 var scoreB = 0;
 var bgimg;
-
+var nobg = 0;
 function startGame() {
 
         myGameArea.start();
-		//welcomescreen = new welcomescreen();
+		welcomebg = new background(880, 470, "welcomescreen.png", 0, 0, "image");
 	    myGamePiece = new component(30, 30, "tank.png", 30, 100, "image");
 		comp1 = new component(30, 30, "tank1.png", 800, 100, "image");
 		blding1 = new blding(10, 60, "green", 0, 215);  
@@ -66,7 +66,6 @@ function everyinterval(n) {
     if ((myGameArea.frameNo / n) % 1 == 0) {return true;}
     return false;
 }
-
 
 function score(width, height, color, x, y, type){
     this.type = type;
@@ -227,11 +226,16 @@ function background(width, height, color, x, y, type) {
 	         	ctx = myGameArea.context;
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
 }
+    this.clear = function() {
+	        	ctx = myGameArea.context;
+                ctx.drawImage(this.image, 0, 0, 0, 0);
+	}
 }
 
 function updateGameArea() {
     myGameArea.clear();
     	bgimg.update();
+	
 	myGamePiece.moveAngle = 0;
     myGamePiece.speed = 0;
 	comp1.moveAngle = 0;
@@ -246,6 +250,8 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[68]) {comp1.moveAngle = 2; }
     if (myGameArea.keys && myGameArea.keys[87]) {comp1.speed= 2; }
     if (myGameArea.keys && myGameArea.keys[83]) {comp1.speed= -2; }
+	
+	if (myGameArea.keys && myGameArea.keys[32]) {welcomebg.clear();myGameArea.stop();myGameArea.clear();  myGameArea.start();nobg = 1; }
 	
 	myGamePiece.newPos();
     myGamePiece.update();
@@ -336,7 +342,9 @@ function updateGameArea() {
 	scoreB.update();
 	blding1.update();
 	blding2.update();
-
+	if(nobg == 0){
+   	welcomebg.update();
+	}
 }
 
 
