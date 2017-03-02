@@ -22,6 +22,8 @@ var scoreA;
 var scoreB = 0;
 var bgimg;
 var nobg = 0;
+var move;
+
 function startGame() {
 
         myGameArea.start();
@@ -248,10 +250,35 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 2; }
     if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -2; }
 	
+    move = Math.floor(Math.random() * 3);  
+
+	/*
 	if (myGameArea.keys && myGameArea.keys[65]) {comp1.moveAngle = -2; }
     if (myGameArea.keys && myGameArea.keys[68]) {comp1.moveAngle = 2; }
     if (myGameArea.keys && myGameArea.keys[87]) {comp1.speed= 2; }
     if (myGameArea.keys && myGameArea.keys[83]) {comp1.speed= -2; }
+	*/
+	move = 4 ;
+	if(move == 1){
+	comp1.moveAngle = -2;
+	}
+	if(move == 3){
+	comp1.moveAngle = 2; 
+	}
+	if(move == 2){
+	comp1.speed= 2;
+	}
+	if(move == 4){
+	// comp1.speed= -2;
+	comp1.moveAngle = myGamePiece.moveAngle;
+	comp1.speed = 2;
+	if(myGamePiece.speed == 0)
+	{
+	comp1.speed = 0.8;
+	}
+	}
+	
+	
 	
 	if (myGameArea.keys && myGameArea.keys[32]) {welcomebg.clear();myGameArea.stop();myGameArea.clear();  myGameArea.start();nobg = 1; }
 	
@@ -346,11 +373,25 @@ function updateGameArea() {
 	scoreB.update();
 	
 	if(scoreB.life == 0){
-	gameover.text = " Player A wins !";
-	gameover.color = "green";
-	gameover.update();
-	myGameArea.stop();
-		document.body.onkeyup = function(e){
+	
+            if(scoreA.val > scoreB.val){	
+			gameover.text = " Player A wins !";
+			gameover.color = "green";
+			gameover.update();
+			}
+			if(scoreA.val < scoreB.val){	
+			gameover.text = " Player B wins !";
+			gameover.color = "red";
+			gameover.update();
+			}
+			if(scoreA.val == scoreB.val){	
+			gameover.text = " Player A wins !";
+			gameover.color = "green";
+			gameover.update();
+			}
+			
+			myGameArea.stop();
+			document.body.onkeyup = function(e){
 			if(e.keyCode == 32){
 				startGame();
 			}
@@ -358,27 +399,29 @@ function updateGameArea() {
 	}
 	
 	if(scoreA.life == 0){
-	gameover.text = " Player B wins !";
-	gameover.color = " Red ";
-	gameover.update();
-	myGameArea.stop();
+            if(scoreA.val > scoreB.val){	
+			gameover.text = " Player A wins !";
+			gameover.color = "green";
+			gameover.update();
+			}
+			if(scoreA.val < scoreB.val){	
+			gameover.text = " Player B wins !";
+			gameover.color = "red";
+			gameover.update();
+			}
+			if(scoreA.val == scoreB.val){	
+			gameover.text = " Player B wins !";
+			gameover.color = "red";
+			gameover.update();
+			}
+	    myGameArea.stop();
 		document.body.onkeyup = function(e){
 			if(e.keyCode == 32){
 				startGame();
 			}
 		}
 	}
-	
-	if(scoreA.life == 0 && scoreB.life == 0 ){
-	gameover.text = " The Game is draw !";
-	gameover.update();
-	myGameArea.stop();
-		document.body.onkeyup = function(e){
-			if(e.keyCode == 32){
-				startGame();
-			}
-		}
-	}
+
 	
 	if(nobg == 0){
    	welcomebg.update();
