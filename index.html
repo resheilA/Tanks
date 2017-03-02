@@ -421,7 +421,20 @@ function updateGameArea() {
 			}
 		}
 	}
-
+	
+	if(scoreA.life == 0 && scoreB.life = 0){
+         if(scoreA.val == scoreB.val){	
+			gameover.text = "Draw !! ";
+			gameover.color = "White";
+			gameover.update();
+			}
+		 myGameArea.stop();
+		 document.body.onkeyup = function(e){
+			if(e.keyCode == 32){
+				startGame();
+			}
+		 }	
+	}
 	
 	if(nobg == 0){
    	welcomebg.update();
