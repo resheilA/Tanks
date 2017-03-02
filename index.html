@@ -32,6 +32,7 @@ function startGame() {
 	    blding2 = new blding(10, 60, "red", 870, 215);  
 		scoreA = new score("20px", "Consolas", "green", 20, 40, "text");
 		scoreB = new score("20px", "Consolas", "red", 670, 40, "text");
+		gameover = new score("50px", "Consolas", "red", 400, 250, "text");
 		bgimg = new background(880, 470, "backgroundimage.jpg", 0, 0, "image");
 }
 
@@ -77,10 +78,11 @@ function score(width, height, color, x, y, type){
     this.y = y;   
 	this.val = 0;
 	this.life = 10;
+	this.color = color;
     this.update = function() {
 			ctx = myGameArea.context;
             ctx.font = this.width + " " + this.height;
-            ctx.fillStyle = color;
+            ctx.fillStyle = this.color;
             ctx.fillText(this.text, this.x, this.y);
         }
 		
@@ -336,12 +338,48 @@ function updateGameArea() {
 		 scoreB.life--;
     }
 	
+	blding1.update();
+	blding2.update();
 	scoreA.text = "Life:" + scoreA.life + " Score:" + scoreA.val;
 	scoreA.update();
 	scoreB.text = "Life:" + scoreB.life + " Score:" + scoreB.val;
 	scoreB.update();
-	blding1.update();
-	blding2.update();
+	
+	if(scoreB.life == 0){
+	gameover.text = " Player A wins !";
+	gameover.color = "green";
+	gameover.update();
+	myGameArea.stop();
+		document.body.onkeyup = function(e){
+			if(e.keyCode == 32){
+				startGame();
+			}
+		}
+	}
+	
+	if(scoreA.life == 0){
+	gameover.text = " Player B wins !";
+	gameover.color = " Red ";
+	gameover.update();
+	myGameArea.stop();
+		document.body.onkeyup = function(e){
+			if(e.keyCode == 32){
+				startGame();
+			}
+		}
+	}
+	
+	if(scoreA.life == 0 && scoreB.life == 0 ){
+	gameover.text = " The Game is draw !";
+	gameover.update();
+	myGameArea.stop();
+		document.body.onkeyup = function(e){
+			if(e.keyCode == 32){
+				startGame();
+			}
+		}
+	}
+	
 	if(nobg == 0){
    	welcomebg.update();
 	}
