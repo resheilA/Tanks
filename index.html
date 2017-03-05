@@ -11,6 +11,55 @@ canvas {
 </head>
 <body onload="startGame()">
 
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script>
+// TO RECIEVE DATA FROM THE DATABASE
+ $(document).ready(function() {              
+
+var interval;
+function callAjax() {
+      $.ajax({   
+        type: "GET",
+        url: "fromdatabase.php",             
+        dataType: "html",   //expect html to be returned                
+        success: function(response){                    			
+			interval = setTimeout(callAjax, 1); 	
+           move = response;		 
+		//   console.log(response);
+        }        		
+    });
+}	
+callAjax();	
+	
+});
+
+</script>
+
+<script>
+// TO RECIEVE DATA FROM THE DATABASE
+ $(document).ready(function() {              
+
+var interval;
+function callAjax() {
+      $.ajax({   
+        type: "GET",
+        url: "fromdatabasep2.php",             
+        dataType: "html",   //expect html to be returned                
+        success: function(response){                    	
+			interval = setTimeout(callAjax, 10); 
+		  // console.log(response);
+		  movep2 = response;
+        }        		
+    });
+}	
+callAjax();	
+	
+});
+
+</script>
+
+
 <script>
 var myGamePiece;
 var comp1;
@@ -23,6 +72,9 @@ var scoreB = 0;
 var bgimg;
 var nobg = 0;
 var move;
+var sendmoves;
+var movep2;
+var sendmovesp2;
 
 function startGame() {
 
@@ -245,12 +297,15 @@ function updateGameArea() {
 	comp1.moveAngle = 0;
     comp1.speed = 0;
     
+	/*	
 	if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece.moveAngle = -2; }
     if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece.moveAngle = 2; }
     if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece.speed= 2; }
-    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -2; }
+    if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece.speed= -2; }	
+	*/
 	
-    move = Math.floor(Math.random() * 3);  
+	
+   // move = Math.floor(Math.random() * 3);  
 
 	/*
 	if (myGameArea.keys && myGameArea.keys[65]) {comp1.moveAngle = -2; }
@@ -258,27 +313,52 @@ function updateGameArea() {
     if (myGameArea.keys && myGameArea.keys[87]) {comp1.speed= 2; }
     if (myGameArea.keys && myGameArea.keys[83]) {comp1.speed= -2; }
 	*/
-	move = 4 ;
+		
+	if (myGameArea.keys && myGameArea.keys[37]) {sendmovesp2 = 1; }
+    else if (myGameArea.keys && myGameArea.keys[39]) {sendmovesp2 = 2; }
+    else if (myGameArea.keys && myGameArea.keys[38]) {sendmovesp2 = 3; }
+    else if (myGameArea.keys && myGameArea.keys[40]) {sendmovesp2 = 4; }
+	else {sendmovesp2 = 0;}
+	
+	if (myGameArea.keys && myGameArea.keys[65]) {sendmoves = 1; }
+    else if (myGameArea.keys && myGameArea.keys[68]) {sendmoves = 2; }
+    else if (myGameArea.keys && myGameArea.keys[87]) {sendmoves = 3; }
+    else if (myGameArea.keys && myGameArea.keys[83]) {sendmoves = 4; }
+	else {sendmoves = 0;}
+	
 	if(move == 1){
-	comp1.moveAngle = -2;
-	}
-	if(move == 3){
-	comp1.moveAngle = 2; 
+	comp1.moveAngle = -1;
 	}
 	if(move == 2){
-	comp1.speed= 2;
+	comp1.moveAngle = 1; 
+	}
+	if(move == 3){
+	comp1.speed= 1;
 	}
 	if(move == 4){
-	// comp1.speed= -2;
-	comp1.moveAngle = myGamePiece.moveAngle;
-	comp1.speed = 2;
-	if(myGamePiece.speed == 0)
-	{
-	comp1.speed = 0.8;
-	}
+	comp1.speed= -1;
+			/* Automated moving testing
+			comp1.moveAngle = myGamePiece.moveAngle;
+			comp1.speed = 2;
+			if(myGamePiece.speed == 0)
+			{
+			comp1.speed = 0.8;
+			}
+			*/
 	}
 	
-	
+    if(movep2 == 1){
+	myGamePiece.moveAngle = -1;
+	}
+	if(movep2 == 2){
+	myGamePiece.moveAngle = 1; 
+	}
+	if(movep2 == 3){
+	myGamePiece.speed= 1;
+	}
+	if(movep2 == 4){
+	myGamePiece.speed= -1;
+	}
 	
 	if (myGameArea.keys && myGameArea.keys[32]) {welcomebg.clear();myGameArea.stop();myGameArea.clear();  myGameArea.start();nobg = 1; }
 	
@@ -422,7 +502,7 @@ function updateGameArea() {
 		}
 	}
 	
-	if(scoreA.life == 0 && scoreB.life = 0){
+	if(scoreA.life == 0 && scoreB.life == 0){
          if(scoreA.val == scoreB.val){	
 			gameover.text = "Draw !! ";
 			gameover.color = "White";
@@ -443,5 +523,51 @@ function updateGameArea() {
 
 
 </script>
+<script>
+	
+	 $(document).ready(function() {     
+	// TO SEND DATA TO THE DATA BASE
+     var interval;
+     function callAjax() {
+		//e.preventDefault();
+	  $.ajax({
+			 data: "data="+sendmoves,
+			 type: "post",
+			 url: "todatabase.php",
+			 success: function(data){
+					interval = setTimeout(callAjax, 10); 
+         //    alert(response);			
+		 //  console.log("success");
+        }        		
+    });
+}	
+callAjax();	
+	
+});
+
+</script> 
+<script>
+	
+	 $(document).ready(function() {     
+	// TO SEND DATA TO THE DATA BASE
+     var interval;
+     function callAjax() {
+		//e.preventDefault();
+	  $.ajax({
+			 data: "data="+sendmovesp2,
+			 type: "post",
+			 url: "todatabasep2.php",
+			 success: function(data){
+					interval = setTimeout(callAjax, 10); 
+         //    alert(response);			
+		//  console.log("success");
+        }        		
+    });
+}	
+callAjax();	
+	
+});
+
+</script> 
 </body>
 </html>
